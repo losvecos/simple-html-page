@@ -108,6 +108,22 @@
             font-size: 12px;
             opacity: 0.6;
         }
+        .email-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .email-input {
+            width: 250px;
+        }
+        .submit-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
         @media print {
             .no-print {
                 display: none;
@@ -121,6 +137,12 @@
 <body>
     <div class="container">
         <h1>125cc CVT Scooter Maintenance Tracker</h1>
+        
+        <div class="email-container no-print">
+            <label for="email">Email for maintenance reminders:</label>
+            <input type="email" id="email" class="email-input" placeholder="your@email.com">
+            <button onclick="saveEmail()" class="submit-button">Submit</button>
+        </div>
         
         <div class="control-panel no-print">
             <div>
@@ -158,10 +180,10 @@
             <thead>
                 <tr>
                     <th style="width: 15%;">Maintenance Item</th>
-                    <th style="width: 10%;">Interval (KM)</th>
-                    <th style="width: 10%;">Interval (Months)</th>
                     <th style="width: 10%;">Last Done (KM)</th>
                     <th style="width: 10%;">Last Done (Date)</th>
+                    <th style="width: 10%;">Interval (KM)</th>
+                    <th style="width: 10%;">Interval (Months)</th>
                     <th style="width: 10%;">Next Due (KM)</th>
                     <th style="width: 10%;">Next Due (Date)</th>
                     <th style="width: 15%;">Status</th>
@@ -250,6 +272,25 @@
             { item: "CVT Rollers", kmInterval: 20000, monthInterval: 24 },
             { item: "General Inspection", kmInterval: 4000, monthInterval: 6 }
         ];
+        
+        // Save email to localStorage
+        function saveEmail() {
+            const email = document.getElementById('email').value;
+            if (email) {
+                localStorage.setItem('maintenance_email', email);
+                alert('Email saved successfully!');
+            } else {
+                alert('Please enter a valid email address');
+            }
+        }
+        
+        // Load email from localStorage
+        function loadEmail() {
+            const email = localStorage.getItem('maintenance_email');
+            if (email) {
+                document.getElementById('email').value = email;
+            }
+        }
 
         // Load maintenance schedule based on selected scooter model
         function loadMaintenanceSchedule() {
@@ -267,10 +308,10 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${item.item}</td>
-                    <td>${item.kmInterval}</td>
-                    <td>${item.monthInterval}</td>
                     <td contenteditable="true" class="editable-cell">0</td>
                     <td contenteditable="true" class="editable-cell"></td>
+                    <td>${item.kmInterval}</td>
+                    <td>${item.monthInterval}</td>
                     <td>${item.kmInterval}</td>
                     <td></td>
                     <td>Not Done</td>
@@ -289,18 +330,18 @@
         // Mark a maintenance item as complete
         function markComplete(button) {
             const row = button.closest('tr');
-            const kmInterval = parseInt(row.cells[1].textContent);
+            const kmInterval = parseInt(row.cells[3].textContent);
             const currentKm = parseInt(document.getElementById('current-km').value) || 0;
             
             // Update last done values
-            row.cells[3].textContent = currentKm;
-            row.cells[4].textContent = new Date().toISOString().split('T')[0];
+            row.cells[1].textContent = currentKm;
+            row.cells[2].textContent = new Date().toISOString().split('T')[0];
             
             // Update next due values
             row.cells[5].textContent = currentKm + kmInterval;
             
             // Calculate next due date
-            const monthInterval = parseInt(row.cells[2].textContent);
+            const monthInterval = parseInt(row.cells[4].textContent);
             const nextDueDate = new Date();
             nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
             row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
@@ -315,10 +356,10 @@
             
             // Create a form for editing
             const itemName = row.cells[0].textContent;
-            const kmInterval = row.cells[1].textContent;
-            const monthInterval = row.cells[2].textContent;
-            const lastDoneKm = row.cells[3].textContent;
-            const lastDoneDate = row.cells[4].textContent;
+            const lastDoneKm = row.cells[1].textContent;
+            const lastDoneDate = row.cells[2].textContent;
+            const kmInterval = row.cells[3].textContent;
+            const monthInterval = row.cells[4].textContent;
             
             // Show edit form
             const editForm = document.createElement('div');
@@ -330,17 +371,17 @@
                         <label>Item Name:
                             <input type="text" id="edit-item-name" value="${itemName}">
                         </label>
-                        <label>KM Interval:
-                            <input type="number" id="edit-km-interval" value="${kmInterval}">
-                        </label>
-                        <label>Month Interval:
-                            <input type="number" id="edit-month-interval" value="${monthInterval}">
-                        </label>
                         <label>Last Done KM:
                             <input type="number" id="edit-last-done-km" value="${lastDoneKm}">
                         </label>
                         <label>Last Done Date:
                             <input type="date" id="edit-last-done-date" value="${lastDoneDate}">
+                        </label>
+                        <label>KM Interval:
+                            <input type="number" id="edit-km-interval" value="${kmInterval}">
+                        </label>
+                        <label>Month Interval:
+                            <input type="number" id="edit-month-interval" value="${monthInterval}">
                         </label>
                         <div class="button-group">
                             <button onclick="saveRowEdit(this, ${row.rowIndex})">Save</button>
@@ -403,33 +444,49 @@
             const row = document.getElementById('maintenance-table').rows[rowIndex];
             
             const newItemName = document.getElementById('edit-item-name').value;
-            const newKmInterval = document.getElementById('edit-km-interval').value;
-            const newMonthInterval = document.getElementById('edit-month-interval').value;
             const newLastDoneKm = document.getElementById('edit-last-done-km').value;
             const newLastDoneDate = document.getElementById('edit-last-done-date').value;
+            const newKmInterval = document.getElementById('edit-km-interval').value;
+            const newMonthInterval = document.getElementById('edit-month-interval').value;
             
             // Update row values
             row.cells[0].textContent = newItemName;
-            row.cells[1].textContent = newKmInterval;
-            row.cells[2].textContent = newMonthInterval;
-            row.cells[3].textContent = newLastDoneKm;
-            row.cells[4].textContent = newLastDoneDate;
+            row.cells[1].textContent = newLastDoneKm;
+            row.cells[2].textContent = newLastDoneDate;
+            row.cells[3].textContent = newKmInterval;
+            row.cells[4].textContent = newMonthInterval;
             
-            // Calculate next due values
-            row.cells[5].textContent = parseInt(newLastDoneKm) + parseInt(newKmInterval);
-            
-            // Calculate next due date
-            if (newLastDoneDate) {
-                const nextDueDate = new Date(newLastDoneDate);
-                nextDueDate.setMonth(nextDueDate.getMonth() + parseInt(newMonthInterval));
-                row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
-            }
+            // Calculate next due values based on available information
+            calculateNextDueValues(row);
             
             // Update status
             updateItemStatus(row);
             
             // Remove modal
             modal.parentElement.remove();
+        }
+        
+        // Calculate next due values based on available information
+        function calculateNextDueValues(row) {
+            const lastDoneKm = parseInt(row.cells[1].textContent) || 0;
+            const lastDoneDate = row.cells[2].textContent;
+            const kmInterval = parseInt(row.cells[3].textContent);
+            const monthInterval = parseInt(row.cells[4].textContent);
+            
+            // Calculate next due KM
+            row.cells[5].textContent = lastDoneKm + kmInterval;
+            
+            // Calculate next due date if last done date is provided
+            if (lastDoneDate) {
+                const nextDueDate = new Date(lastDoneDate);
+                nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
+                row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+            } else {
+                // If no last done date, use current date
+                const nextDueDate = new Date();
+                nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
+                row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+            }
         }
         
         // Cancel edit
@@ -454,17 +511,20 @@
             
             const rows = document.querySelectorAll('#maintenance-items tr');
             rows.forEach(row => {
-                // If last done date is empty, set it to today's date
-                if (!row.cells[4].textContent.trim()) {
-                    row.cells[4].textContent = new Date().toISOString().split('T')[0];
-                    
-                    // Calculate next due date based on today's date
-                    const monthInterval = parseInt(row.cells[2].textContent);
-                    const nextDueDate = new Date();
-                    nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
-                    row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+                // Update next due values based on available information
+                const lastDoneKm = parseInt(row.cells[1].textContent) || 0;
+                const lastDoneDate = row.cells[2].textContent;
+                const kmInterval = parseInt(row.cells[3].textContent);
+                
+                // If last done date is empty and last done km is 0, set last done date to today
+                if (!lastDoneDate.trim() && lastDoneKm === 0) {
+                    row.cells[2].textContent = new Date().toISOString().split('T')[0];
                 }
                 
+                // Recalculate next due values
+                calculateNextDueValues(row);
+                
+                // Update status
                 updateItemStatus(row);
             });
         }
@@ -527,17 +587,17 @@
                         <label>Item Name:
                             <input type="text" id="add-item-name" placeholder="E.g., Tire Rotation">
                         </label>
-                        <label>KM Interval:
-                            <input type="number" id="add-km-interval" value="5000">
-                        </label>
-                        <label>Month Interval:
-                            <input type="number" id="add-month-interval" value="6">
-                        </label>
                         <label>Last Done KM:
                             <input type="number" id="add-last-done-km" value="0">
                         </label>
                         <label>Last Done Date:
                             <input type="date" id="add-last-done-date">
+                        </label>
+                        <label>KM Interval:
+                            <input type="number" id="add-km-interval" value="5000">
+                        </label>
+                        <label>Month Interval:
+                            <input type="number" id="add-month-interval" value="6">
                         </label>
                         <div class="button-group">
                             <button onclick="saveNewItem(this)">Add Item</button>
@@ -556,37 +616,26 @@
             const table = document.getElementById('maintenance-items');
             
             const newItemName = document.getElementById('add-item-name').value;
-            const newKmInterval = document.getElementById('add-km-interval').value;
-            const newMonthInterval = document.getElementById('add-month-interval').value;
             const newLastDoneKm = document.getElementById('add-last-done-km').value;
             const newLastDoneDate = document.getElementById('add-last-done-date').value;
+            const newKmInterval = document.getElementById('add-km-interval').value;
+            const newMonthInterval = document.getElementById('add-month-interval').value;
             
             if (!newItemName) {
                 alert('Please enter an item name');
                 return;
             }
             
-            // Calculate next due values
-            const nextDueKm = parseInt(newLastDoneKm) + parseInt(newKmInterval);
-            
-            // Calculate next due date
-            let nextDueDate = '';
-            if (newLastDoneDate) {
-                const dueDate = new Date(newLastDoneDate);
-                dueDate.setMonth(dueDate.getMonth() + parseInt(newMonthInterval));
-                nextDueDate = dueDate.toISOString().split('T')[0];
-            }
-            
             // Create new row
             const row = table.insertRow();
             row.innerHTML = `
                 <td>${newItemName}</td>
-                <td>${newKmInterval}</td>
-                <td>${newMonthInterval}</td>
                 <td class="editable-cell">${newLastDoneKm}</td>
                 <td class="editable-cell">${newLastDoneDate}</td>
-                <td>${nextDueKm}</td>
-                <td>${nextDueDate}</td>
+                <td>${newKmInterval}</td>
+                <td>${newMonthInterval}</td>
+                <td></td>
+                <td></td>
                 <td>New</td>
                 <td class="no-print">
                     <button onclick="markComplete(this)">Complete</button>
@@ -595,8 +644,11 @@
             `;
             
             // Make the cells editable
-            row.cells[3].setAttribute('contenteditable', 'true');
-            row.cells[4].setAttribute('contenteditable', 'true');
+            row.cells[1].setAttribute('contenteditable', 'true');
+            row.cells[2].setAttribute('contenteditable', 'true');
+            
+            // Calculate next due values
+            calculateNextDueValues(row);
             
             // Update status
             updateItemStatus(row);
@@ -628,11 +680,21 @@
         window.onload = function() {
             loadMaintenanceSchedule();
             loadNotes();
+            loadEmail();
             
             // Add event listener for custom selection
             document.getElementById('scooter-model').addEventListener('change', function() {
                 if (this.value === 'custom') {
                     handleCustomSelection();
+                }
+            });
+            
+            // Add event listeners for editable cells
+            document.addEventListener('input', function(e) {
+                if (e.target.closest('.editable-cell')) {
+                    const row = e.target.closest('tr');
+                    calculateNextDueValues(row);
+                    updateItemStatus(row);
                 }
             });
         };
