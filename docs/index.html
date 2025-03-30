@@ -3,75 +3,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple HTML Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>125cc CVT Scooter Maintenance Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .scooter-select {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        select, input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .completed {
+            background-color: #d4edda !important;
+        }
+        .due-soon {
+            background-color: #fff3cd !important;
+        }
+        .overdue {
+            background-color: #f8d7da !important;
+        }
+        .notes {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .print-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                padding: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Simple Page</h1>
-        <p class="tagline">A clean and modern demonstration site</p>
-    </header>
-    
-    <main>
-        <section>
-            <h2>About This Page</h2>
-            <p>This is a simple HTML page created as a demonstration. It showcases basic HTML structure and styling with CSS.</p>
-            <p>Feel free to use this as a template for your own projects or as a learning resource.</p>
-        </section>
+    <div class="container">
+        <h1>125cc CVT Scooter Maintenance Tracker</h1>
         
-        <section>
-            <h2>Features</h2>
-            <ul>
-                <li>Clean HTML structure</li>
-                <li>Simple and lightweight</li>
-                <li>Easy to understand</li>
-                <li>Responsive design</li>
-                <li>Modern styling</li>
-            </ul>
-        </section>
-        
-        <section>
-            <h2>Projects</h2>
-            <div class="projects">
-                <div class="project">
-                    <h3>Project 1</h3>
-                    <p>A sample project description that showcases what can be done with this template.</p>
-                </div>
-                <div class="project">
-                    <h3>Project 2</h3>
-                    <p>Another example project to demonstrate the layout capabilities.</p>
-                </div>
-                <div class="project">
-                    <h3>Project 3</h3>
-                    <p>A third project example to show how multiple items can be displayed.</p>
-                </div>
+        <div class="control-panel no-print">
+            <div>
+                <label for="scooter-model">Scooter Model:</label>
+                <select id="scooter-model" onchange="loadMaintenanceSchedule()">
+                    <option value="honda-pcx">Honda PCX 125</option>
+                    <option value="vespa-gts">Piaggio Vespa GTS 125</option>
+                    <option value="yamaha-nmax">Yamaha NMAX 125</option>
+                    <option value="kymco-agility">Kymco Agility 125</option>
+                    <option value="sym-symphony">SYM Symphony 125</option>
+                    <option value="piaggio-liberty">Piaggio Liberty 125</option>
+                    <option value="honda-shi">Honda SH125i</option>
+                    <option value="yamaha-xmax">Yamaha Xmax 125</option>
+                    <option value="peugeot-tweet">Peugeot Tweet 125</option>
+                    <option value="suzuki-burgman">Suzuki Burgman 125</option>
+                    <option value="custom">Custom/Manual Settings</option>
+                </select>
             </div>
-        </section>
+            
+            <div>
+                <label for="purchase-date">Purchase Date:</label>
+                <input type="date" id="purchase-date">
+                
+                <label for="current-km">Current KM:</label>
+                <input type="number" id="current-km" min="0">
+                
+                <button onclick="updateStatus()">Update Status</button>
+                <button class="print-button" onclick="window.print()">Print Schedule</button>
+                <button onclick="addCustomMaintenanceItem()">Add Custom Item</button>
+            </div>
+        </div>
         
-        <section>
-            <h2>Resources</h2>
-            <ul>
-                <li><a href="#">HTML5 Documentation</a></li>
-                <li><a href="#">CSS Reference</a></li>
-                <li><a href="#">Web Design Principles</a></li>
-                <li><a href="#">Accessibility Guidelines</a></li>
-            </ul>
-        </section>
+        <div class="input-group no-print">
+            <label for="owner-name">Owner Name:</label>
+            <input type="text" id="owner-name">
+            
+            <label for="license-plate">License Plate:</label>
+            <input type="text" id="license-plate">
+            
+            <label for="vin">VIN:</label>
+            <input type="text" id="vin">
+        </div>
         
-        <section>
-            <h2>Contact</h2>
-            <p>Have questions or want to learn more? Feel free to reach out:</p>
-            <ul class="contact-info">
-                <li>Email: example@example.com</li>
-                <li>Twitter: @example</li>
-                <li>GitHub: github.com/example</li>
-            </ul>
-        </section>
-    </main>
-    
-    <footer>
-        <p>&copy; 2025 Simple HTML Page</p>
-        <p>Created as a demonstration project</p>
-    </footer>
+        <table id="maintenance-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Maintenance Item</th>
+                    <th style="width: 10%;">Interval (KM)</th>
+                    <th style="width: 10%;">Interval (Months)</th>
+                    <th style="width: 10%;">Last Done (KM)</th>
+                    <th style="width: 10%;">Last Done (Date)</th>
+                    <th style="width: 10%;">Next Due (KM)</th>
+                    <th style="width: 10%;">Next Due (Date)</th>
+                    <th style="width: 15%;">Status</th>
+                    <th style="width: 10%;" class="no-print">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="maintenance-items">
+                <!-- Maintenance items will be populated here -->
+            </tbody>
+        </table>
+        
+        <div class="notes-section">
+            <h3>Maintenance Notes</h3>
+            <textarea id="maintenance-notes" class="notes" rows="4" placeholder="Add your maintenance notes here..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Maintenance schedules for different scooter models
+        const maintenanceSchedules = {
+            'honda-pcx': [
+                { item: "Engine Oil & Filter", kmInterval: 4000, monthInterval: 6 },
+                { item: "Transmission Oil", kmInterval: 12000, monthInterval: 12 },
+                { item: "Air Filter", kmInterval: 8000, monthInterval: 12 },
+                { item: "Spark Plug", kmInterval: 8000, monthInterval: 12 },
+                { item: "Valve Clearance Check", kmInterval: 8000, monthInterval: 12 },
+                { item: "Drive Belt", kmInterval: 24000, monthInterval: 24 },
+                { item: "Coolant", kmInterval: 24000, monthInterval: 24 },
+                { item: "Brake Fluid", kmInterval: 12000, monthInterval: 12 },
+                { item: "Brake Pads", kmInterval: 8000, monthInterval: 12 },
+                { item: "CVT Rollers", kmInterval: 24000, monthInterval: 24 },
+                { item: "General Inspection", kmInterval: 4000, monthInterval: 6 }
+            ],
+            'vespa-gts': [
+                { item: "Engine Oil & Filter", kmInterval: 5000, monthInterval: 6 },
+                { item: "Transmission Oil", kmInterval: 10000, monthInterval: 12 },
+                { item: "Air Filter", kmInterval: 10000, monthInterval: 12 },
+                { item: "Spark Plug", kmInterval: 10000, monthInterval: 12 },
+                { item: "Valve Clearance Check", kmInterval: 10000, monthInterval: 12 },
+                { item: "Drive Belt", kmInterval: 20000, monthInterval: 24 },
+                { item: "Coolant", kmInterval: 20000, monthInterval: 24 },
+                { item: "Brake Fluid", kmInterval: 10000, monthInterval: 12 },
+                { item: "Brake Pads", kmInterval: 10000, monthInterval: 12 },
+                { item: "CVT Rollers", kmInterval: 20000, monthInterval: 24 },
+                { item: "General Inspection", kmInterval: 5000, monthInterval: 6 }
+            ],
+            'yamaha-nmax': [
+                { item: "Engine Oil & Filter", kmInterval: 3000, monthInterval: 6 },
+                { item: "Transmission Oil", kmInterval: 10000, monthInterval: 12 },
+                { item: "Air Filter", kmInterval: 6000, monthInterval: 12 },
+                { item: "Spark Plug", kmInterval: 8000, monthInterval: 12 },
+                { item: "Valve Clearance Check", kmInterval: 16000, monthInterval: 24 },
+                { item: "Drive Belt", kmInterval: 20000, monthInterval: 24 },
+                { item: "Coolant", kmInterval: 20000, monthInterval: 24 },
+                { item: "Brake Fluid", kmInterval: 10000, monthInterval: 12 },
+                { item: "Brake Pads", kmInterval: 8000, monthInterval: 12 },
+                { item: "CVT Rollers", kmInterval: 20000, monthInterval: 24 },
+                { item: "General Inspection", kmInterval: 3000, monthInterval: 6 }
+            ],
+            'kymco-agility': [
+                { item: "Engine Oil & Filter", kmInterval: 3000, monthInterval: 6 },
+                { item: "Transmission Oil", kmInterval: 8000, monthInterval: 12 },
+                { item: "Air Filter", kmInterval: 6000, monthInterval: 12 },
+                { item: "Spark Plug", kmInterval: 6000, monthInterval: 12 },
+                { item: "Valve Clearance Check", kmInterval: 12000, monthInterval: 24 },
+                { item: "Drive Belt", kmInterval: 18000, monthInterval: 24 },
+                { item: "Brake Fluid", kmInterval: 10000, monthInterval: 12 },
+                { item: "Brake Pads", kmInterval: 6000, monthInterval: 12 },
+                { item: "CVT Rollers", kmInterval: 18000, monthInterval: 24 },
+                { item: "General Inspection", kmInterval: 3000, monthInterval: 6 }
+            ]
+        };
+        
+        // Default maintenance schedule for models not specifically defined
+        const defaultSchedule = [
+            { item: "Engine Oil & Filter", kmInterval: 4000, monthInterval: 6 },
+            { item: "Transmission Oil", kmInterval: 8000, monthInterval: 12 },
+            { item: "Air Filter", kmInterval: 8000, monthInterval: 12 },
+            { item: "Spark Plug", kmInterval: 8000, monthInterval: 12 },
+            { item: "Valve Clearance Check", kmInterval: 10000, monthInterval: 12 },
+            { item: "Drive Belt", kmInterval: 20000, monthInterval: 24 },
+            { item: "Coolant", kmInterval: 20000, monthInterval: 24 },
+            { item: "Brake Fluid", kmInterval: 12000, monthInterval: 12 },
+            { item: "Brake Pads", kmInterval: 8000, monthInterval: 12 },
+            { item: "CVT Rollers", kmInterval: 20000, monthInterval: 24 },
+            { item: "General Inspection", kmInterval: 4000, monthInterval: 6 }
+        ];
+
+        // Load maintenance schedule based on selected scooter model
+        function loadMaintenanceSchedule() {
+            const scooterModel = document.getElementById('scooter-model').value;
+            const maintenanceItems = document.getElementById('maintenance-items');
+            
+            // Clear existing items
+            maintenanceItems.innerHTML = '';
+            
+            // Get the appropriate maintenance schedule or use default
+            const schedule = maintenanceSchedules[scooterModel] || defaultSchedule;
+            
+            // Add maintenance items to the table
+            schedule.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.item}</td>
+                    <td>${item.kmInterval}</td>
+                    <td>${item.monthInterval}</td>
+                    <td contenteditable="true">0</td>
+                    <td contenteditable="true"></td>
+                    <td>${item.kmInterval}</td>
+                    <td></td>
+                    <td>Not Done</td>
+                    <td class="no-print">
+                        <button onclick="markComplete(this)">Complete</button>
+                        <button onclick="editRow(this)">Edit</button>
+                    </td>
+                `;
+                maintenanceItems.appendChild(row);
+            });
+            
+            // Initialize dates if purchase date is set
+            updateStatus();
+        }
+        
+        // Mark a maintenance item as complete
+        function markComplete(button) {
+            const row = button.closest('tr');
+            const kmInterval = parseInt(row.cells[1].textContent);
+            const currentKm = parseInt(document.getElementById('current-km').value) || 0;
+            
+            // Update last done values
+            row.cells[3].textContent = currentKm;
+            row.cells[4].textContent = new Date().toISOString().split('T')[0];
+            
+            // Update next due values
+            row.cells[5].textContent = currentKm + kmInterval;
+            
+            // Calculate next due date
+            const monthInterval = parseInt(row.cells[2].textContent);
+            const nextDueDate = new Date();
+            nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
+            row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+            
+            // Update status
+            updateItemStatus(row);
+        }
+        
+        // Edit a maintenance row
+        function editRow(button) {
+            const row = button.closest('tr');
+            
+            // Create a form for editing
+            const itemName = row.cells[0].textContent;
+            const kmInterval = row.cells[1].textContent;
+            const monthInterval = row.cells[2].textContent;
+            const lastDoneKm = row.cells[3].textContent;
+            const lastDoneDate = row.cells[4].textContent;
+            
+            // Show edit form
+            const editForm = document.createElement('div');
+            editForm.className = 'edit-form';
+            editForm.innerHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>Edit Maintenance Item</h3>
+                        <label>Item Name:
+                            <input type="text" id="edit-item-name" value="${itemName}">
+                        </label>
+                        <label>KM Interval:
+                            <input type="number" id="edit-km-interval" value="${kmInterval}">
+                        </label>
+                        <label>Month Interval:
+                            <input type="number" id="edit-month-interval" value="${monthInterval}">
+                        </label>
+                        <label>Last Done KM:
+                            <input type="number" id="edit-last-done-km" value="${lastDoneKm}">
+                        </label>
+                        <label>Last Done Date:
+                            <input type="date" id="edit-last-done-date" value="${lastDoneDate}">
+                        </label>
+                        <div class="button-group">
+                            <button onclick="saveRowEdit(this, ${row.rowIndex})">Save</button>
+                            <button onclick="cancelEdit(this)">Cancel</button>
+                            <button onclick="deleteRow(this, ${row.rowIndex})" class="delete-btn">Delete Item</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(editForm);
+            
+            // Add styles for the modal
+            const style = document.createElement('style');
+            style.textContent = `
+                .modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                }
+                .modal-content {
+                    background-color: white;
+                    padding: 20px;
+                    border-radius: 5px;
+                    max-width: 500px;
+                    width: 80%;
+                }
+                .modal-content label {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                .modal-content input {
+                    width: 100%;
+                    padding: 5px;
+                    box-sizing: border-box;
+                }
+                .button-group {
+                    margin-top: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .delete-btn {
+                    background-color: #dc3545;
+                    color: white;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Save edited row
+        function saveRowEdit(button, rowIndex) {
+            const modal = button.closest('.modal');
+            const row = document.getElementById('maintenance-table').rows[rowIndex];
+            
+            const newItemName = document.getElementById('edit-item-name').value;
+            const newKmInterval = document.getElementById('edit-km-interval').value;
+            const newMonthInterval = document.getElementById('edit-month-interval').value;
+            const newLastDoneKm = document.getElementById('edit-last-done-km').value;
+            const newLastDoneDate = document.getElementById('edit-last-done-date').value;
+            
+            // Update row values
+            row.cells[0].textContent = newItemName;
+            row.cells[1].textContent = newKmInterval;
+            row.cells[2].textContent = newMonthInterval;
+            row.cells[3].textContent = newLastDoneKm;
+            row.cells[4].textContent = newLastDoneDate;
+            
+            // Calculate next due values
+            row.cells[5].textContent = parseInt(newLastDoneKm) + parseInt(newKmInterval);
+            
+            // Calculate next due date
+            if (newLastDoneDate) {
+                const nextDueDate = new Date(newLastDoneDate);
+                nextDueDate.setMonth(nextDueDate.getMonth() + parseInt(newMonthInterval));
+                row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+            }
+            
+            // Update status
+            updateItemStatus(row);
+            
+            // Remove modal
+            modal.parentElement.remove();
+        }
+        
+        // Cancel edit
+        function cancelEdit(button) {
+            const modal = button.closest('.modal');
+            modal.parentElement.remove();
+        }
+        
+        // Delete row
+        function deleteRow(button, rowIndex) {
+            if (confirm('Are you sure you want to delete this maintenance item?')) {
+                const modal = button.closest('.modal');
+                const table = document.getElementById('maintenance-table');
+                table.deleteRow(rowIndex);
+                modal.parentElement.remove();
+            }
+        }
+        
+        // Update status of all maintenance items
+        function updateStatus() {
+            const currentKm = parseInt(document.getElementById('current-km').value) || 0;
+            const purchaseDate = document.getElementById('purchase-date').value;
+            
+            if (!purchaseDate) return;
+            
+            const rows = document.querySelectorAll('#maintenance-items tr');
+            rows.forEach(row => {
+                // If last done date is empty, set it to purchase date
+                if (!row.cells[4].textContent.trim()) {
+                    row.cells[4].textContent = purchaseDate;
+                    
+                    // Calculate next due date based on purchase date
+                    const monthInterval = parseInt(row.cells[2].textContent);
+                    const nextDueDate = new Date(purchaseDate);
+                    nextDueDate.setMonth(nextDueDate.getMonth() + monthInterval);
+                    row.cells[6].textContent = nextDueDate.toISOString().split('T')[0];
+                }
+                
+                updateItemStatus(row);
+            });
+        }
+        
+        // Update status of a single maintenance item
+        function updateItemStatus(row) {
+            const currentKm = parseInt(document.getElementById('current-km').value) || 0;
+            const nextDueKm = parseInt(row.cells[5].textContent);
+            const nextDueDate = new Date(row.cells[6].textContent);
+            const today = new Date();
+            
+            // Reset row classes
+            row.classList.remove('completed', 'due-soon', 'overdue');
+            
+            // Set status based on KM and date
+            if (currentKm >= nextDueKm || today >= nextDueDate) {
+                row.cells[7].textContent = 'Overdue';
+                row.classList.add('overdue');
+            } else if (currentKm >= nextDueKm - 500 || 
+                      (nextDueDate - today) / (1000 * 60 * 60 * 24) <= 30) {
+                row.cells[7].textContent = 'Due Soon';
+                row.classList.add('due-soon');
+            } else {
+                row.cells[7].textContent = 'OK';
+                row.classList.add('completed');
+            }
+        }
+        
+        // Save maintenance notes to localStorage
+        function saveNotes() {
+            const notes = document.getElementById('maintenance-notes').value;
+            const scooterModel = document.getElementById('scooter-model').value;
+            localStorage.setItem(`notes_${scooterModel}`, notes);
+        }
+        
+        // Load maintenance notes from localStorage
+        function loadNotes() {
+            const scooterModel = document.getElementById('scooter-model').value;
+            const notes = localStorage.getItem(`notes_${scooterModel}`);
+            if (notes) {
+                document.getElementById('maintenance-notes').value = notes;
+            } else {
+                document.getElementById('maintenance-notes').value = '';
+            }
+        }
+        
+        // Add event listeners
+        document.getElementById('scooter-model').addEventListener('change', loadNotes);
+        document.getElementById('maintenance-notes').addEventListener('input', saveNotes);
+        
+        // Add custom maintenance item
+        function addCustomMaintenanceItem() {
+            // Show add form
+            const addForm = document.createElement('div');
+            addForm.className = 'add-form';
+            addForm.innerHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <h3>Add Custom Maintenance Item</h3>
+                        <label>Item Name:
+                            <input type="text" id="add-item-name" placeholder="E.g., Tire Rotation">
+                        </label>
+                        <label>KM Interval:
+                            <input type="number" id="add-km-interval" value="5000">
+                        </label>
+                        <label>Month Interval:
+                            <input type="number" id="add-month-interval" value="6">
+                        </label>
+                        <label>Last Done KM:
+                            <input type="number" id="add-last-done-km" value="0">
+                        </label>
+                        <label>Last Done Date:
+                            <input type="date" id="add-last-done-date">
+                        </label>
+                        <div class="button-group">
+                            <button onclick="saveNewItem(this)">Add Item</button>
+                            <button onclick="cancelEdit(this)">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(addForm);
+        }
+        
+        // Save new maintenance item
+        function saveNewItem(button) {
+            const modal = button.closest('.modal');
+            const table = document.getElementById('maintenance-items');
+            
+            const newItemName = document.getElementById('add-item-name').value;
+            const newKmInterval = document.getElementById('add-km-interval').value;
+            const newMonthInterval = document.getElementById('add-month-interval').value;
+            const newLastDoneKm = document.getElementById('add-last-done-km').value;
+            const newLastDoneDate = document.getElementById('add-last-done-date').value;
+            
+            if (!newItemName) {
+                alert('Please enter an item name');
+                return;
+            }
+            
+            // Calculate next due values
+            const nextDueKm = parseInt(newLastDoneKm) + parseInt(newKmInterval);
+            
+            // Calculate next due date
+            let nextDueDate = '';
+            if (newLastDoneDate) {
+                const dueDate = new Date(newLastDoneDate);
+                dueDate.setMonth(dueDate.getMonth() + parseInt(newMonthInterval));
+                nextDueDate = dueDate.toISOString().split('T')[0];
+            }
+            
+            // Create new row
+            const row = table.insertRow();
+            row.innerHTML = `
+                <td>${newItemName}</td>
+                <td>${newKmInterval}</td>
+                <td>${newMonthInterval}</td>
+                <td>${newLastDoneKm}</td>
+                <td>${newLastDoneDate}</td>
+                <td>${nextDueKm}</td>
+                <td>${nextDueDate}</td>
+                <td>New</td>
+                <td class="no-print">
+                    <button onclick="markComplete(this)">Complete</button>
+                    <button onclick="editRow(this)">Edit</button>
+                </td>
+            `;
+            
+            // Update status
+            updateItemStatus(row);
+            
+            // Remove modal
+            modal.parentElement.remove();
+        }
+        
+        // Handle "Custom" selection
+        function handleCustomSelection() {
+            const scooterModel = document.getElementById('scooter-model').value;
+            
+            if (scooterModel === 'custom') {
+                // Clear existing items
+                document.getElementById('maintenance-items').innerHTML = '';
+                
+                // Add a prompt to add custom items
+                const table = document.getElementById('maintenance-items');
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td colspan="9" style="text-align: center; padding: 20px;">
+                        <p>No maintenance items added yet. Click "Add Custom Item" to create your custom maintenance schedule.</p>
+                    </td>
+                `;
+            }
+        }
+        
+        // Initialize the page
+        window.onload = function() {
+            loadMaintenanceSchedule();
+            loadNotes();
+            
+            // Add event listener for custom selection
+            document.getElementById('scooter-model').addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    handleCustomSelection();
+                }
+            });
+        };
+    </script>
 </body>
 </html>
