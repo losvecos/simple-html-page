@@ -80,6 +80,34 @@
             padding: 10px 15px;
             cursor: pointer;
         }
+        .notes-section {
+            position: relative;
+        }
+        .add-custom-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .editable-cell {
+            background-color: #e8f4ff;
+            position: relative;
+            padding-right: 25px;
+        }
+        .editable-cell::after {
+            content: "✏️";
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.6;
+        }
         @media print {
             .no-print {
                 display: none;
@@ -118,7 +146,6 @@
                 
                 <button onclick="updateStatus()">Update Status</button>
                 <button class="print-button" onclick="window.print()">Print Schedule</button>
-                <button onclick="addCustomMaintenanceItem()">Add Custom Item</button>
             </div>
         </div>
         
@@ -148,6 +175,7 @@
         
         <div class="notes-section">
             <h3>Maintenance Notes</h3>
+            <button class="add-custom-btn no-print" onclick="addCustomMaintenanceItem()">Add Custom Item</button>
             <textarea id="maintenance-notes" class="notes" rows="4" placeholder="Add your maintenance notes here..."></textarea>
         </div>
     </div>
@@ -241,8 +269,8 @@
                     <td>${item.item}</td>
                     <td>${item.kmInterval}</td>
                     <td>${item.monthInterval}</td>
-                    <td contenteditable="true">0</td>
-                    <td contenteditable="true"></td>
+                    <td contenteditable="true" class="editable-cell">0</td>
+                    <td contenteditable="true" class="editable-cell"></td>
                     <td>${item.kmInterval}</td>
                     <td></td>
                     <td>Not Done</td>
@@ -555,8 +583,8 @@
                 <td>${newItemName}</td>
                 <td>${newKmInterval}</td>
                 <td>${newMonthInterval}</td>
-                <td>${newLastDoneKm}</td>
-                <td>${newLastDoneDate}</td>
+                <td class="editable-cell">${newLastDoneKm}</td>
+                <td class="editable-cell">${newLastDoneDate}</td>
                 <td>${nextDueKm}</td>
                 <td>${nextDueDate}</td>
                 <td>New</td>
@@ -565,6 +593,10 @@
                     <button onclick="editRow(this)">Edit</button>
                 </td>
             `;
+            
+            // Make the cells editable
+            row.cells[3].setAttribute('contenteditable', 'true');
+            row.cells[4].setAttribute('contenteditable', 'true');
             
             // Update status
             updateItemStatus(row);
