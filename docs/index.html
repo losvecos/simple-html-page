@@ -472,9 +472,15 @@
             const lastDoneDate = row.cells[2].textContent;
             const kmInterval = parseInt(row.cells[3].textContent);
             const monthInterval = parseInt(row.cells[4].textContent);
+            const currentKm = parseInt(document.getElementById('current-km').value) || 0;
             
-            // Calculate next due KM
-            row.cells[5].textContent = lastDoneKm + kmInterval;
+            // Calculate next due KM if last done KM is provided
+            if (lastDoneKm > 0) {
+                row.cells[5].textContent = lastDoneKm + kmInterval;
+            } else {
+                // If no last done KM, use current KM as base
+                row.cells[5].textContent = currentKm + kmInterval;
+            }
             
             // Calculate next due date if last done date is provided
             if (lastDoneDate) {
@@ -512,16 +518,6 @@
             const rows = document.querySelectorAll('#maintenance-items tr');
             rows.forEach(row => {
                 // Update next due values based on available information
-                const lastDoneKm = parseInt(row.cells[1].textContent) || 0;
-                const lastDoneDate = row.cells[2].textContent;
-                const kmInterval = parseInt(row.cells[3].textContent);
-                
-                // If last done date is empty and last done km is 0, set last done date to today
-                if (!lastDoneDate.trim() && lastDoneKm === 0) {
-                    row.cells[2].textContent = new Date().toISOString().split('T')[0];
-                }
-                
-                // Recalculate next due values
                 calculateNextDueValues(row);
                 
                 // Update status
