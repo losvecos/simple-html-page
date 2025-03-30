@@ -310,14 +310,13 @@
                     <td>${item.item}</td>
                     <td contenteditable="true" class="editable-cell">0</td>
                     <td contenteditable="true" class="editable-cell"></td>
-                    <td>${item.kmInterval}</td>
-                    <td>${item.monthInterval}</td>
+                    <td contenteditable="true" class="editable-cell">${item.kmInterval}</td>
+                    <td contenteditable="true" class="editable-cell">${item.monthInterval}</td>
                     <td>${item.kmInterval}</td>
                     <td></td>
                     <td>Not Done</td>
                     <td class="no-print">
                         <button onclick="markComplete(this)">Complete</button>
-                        <button onclick="editRow(this)">Edit</button>
                     </td>
                 `;
                 maintenanceItems.appendChild(row);
@@ -626,22 +625,17 @@
             const row = table.insertRow();
             row.innerHTML = `
                 <td>${newItemName}</td>
-                <td class="editable-cell">${newLastDoneKm}</td>
-                <td class="editable-cell">${newLastDoneDate}</td>
-                <td>${newKmInterval}</td>
-                <td>${newMonthInterval}</td>
+                <td class="editable-cell" contenteditable="true">${newLastDoneKm}</td>
+                <td class="editable-cell" contenteditable="true">${newLastDoneDate}</td>
+                <td class="editable-cell" contenteditable="true">${newKmInterval}</td>
+                <td class="editable-cell" contenteditable="true">${newMonthInterval}</td>
                 <td></td>
                 <td></td>
                 <td>New</td>
                 <td class="no-print">
                     <button onclick="markComplete(this)">Complete</button>
-                    <button onclick="editRow(this)">Edit</button>
                 </td>
             `;
-            
-            // Make the cells editable
-            row.cells[1].setAttribute('contenteditable', 'true');
-            row.cells[2].setAttribute('contenteditable', 'true');
             
             // Calculate next due values
             calculateNextDueValues(row);
